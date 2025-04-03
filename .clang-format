@@ -1,0 +1,7 @@
+---
+BasedOnStyle: Microsoft
+PointerAlignment: Left
+BreakTemplateDeclarations: Yes
+IndentAccessModifiers: false
+AccessModifierOffset: -4
+...
