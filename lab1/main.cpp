@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -16,11 +17,7 @@ void op_print(const vector<string>& text)
 
 vector<pair<string, size_t>> get_frequency(const vector<string>& text)
 {
-    vector<string> unique{};
-    std::copy(text.begin(), text.end(), std::back_inserter(unique));
-    std::sort(unique.begin(), unique.end());
-    auto unique_it = std::unique(unique.begin(), unique.end());
-    unique.erase(unique_it, unique.end());
+    std::set<string> unique{text.begin(), text.end()};
 
     vector<pair<string, size_t>> frequencies{};
     std::transform(unique.begin(), unique.end(), std::back_inserter(frequencies), [&text](string word) {
