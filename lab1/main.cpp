@@ -14,7 +14,7 @@ void op_print(const vector<string>& text)
     std::cout << std::endl;
 }
 
-void op_frequency(const vector<string>& text)
+vector<pair<string, size_t>> get_frequency(const vector<string>& text)
 {
     vector<string> unique{};
     std::copy(text.begin(), text.end(), std::back_inserter(unique));
@@ -28,11 +28,22 @@ void op_frequency(const vector<string>& text)
         return std::make_pair(word, occurences);
     });
 
+    return frequencies;
+}
+
+size_t max(const vector<pair<string, size_t>>& container)
+{
+    auto it = std::max_element(container.begin(), container.end(),
+                               [](auto a, auto b) { return a.first.size() < b.first.size(); });
+    return it->first.size();
+}
+
+void op_frequency(const vector<string>& text)
+{
+    vector<pair<string, size_t>> frequencies{get_frequency(text)};
     std::sort(frequencies.begin(), frequencies.end(), [](auto a, auto b) { return a.second > b.second; });
 
-    auto max_it = std::max_element(frequencies.begin(), frequencies.end(),
-                                   [](auto a, auto b) { return a.first.size() < b.first.size(); });
-    size_t max_len = max_it->first.size();
+    size_t max_len{max(frequencies)};
 
     for (auto elem : frequencies)
     {
@@ -42,6 +53,16 @@ void op_frequency(const vector<string>& text)
 
 void op_table(const vector<string>& text)
 {
+    vector<pair<string, size_t>> frequencies{get_frequency(text)};
+    std::sort(frequencies.begin(), frequencies.end(), [](auto a, auto b) { return a.first < b.first; });
+
+    size_t max_len{max(frequencies)};
+
+    for (auto elem : frequencies)
+    {
+        cout << std::left << setw(max_len + 1) << elem.first;
+        cout << std::right << elem.second << endl;
+    }
 }
 
 void op_substitute(vector<string>& text, const string& parameter)
