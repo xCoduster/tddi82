@@ -24,3 +24,14 @@ build/lab1: | build
 
 build/lab1/%.o: lab1/%.cpp | build/lab1
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+.PHONY: list
+list: $(call objs,list) | build/list
+	$(CXX) $(CXXFLAGS) $(call objs,list) -o build/list/prog
+	./build/list/prog
+
+build/list: | build
+	mkdir build/list
+
+build/list/%.o: list/%.cpp | build/list
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
