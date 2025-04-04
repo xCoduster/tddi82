@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <exception>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -64,10 +65,27 @@ void op_table(const vector<string>& text)
 
 void op_substitute(vector<string>& text, const string& parameter)
 {
+    std::string old_word{};
+    std::string new_word{};
+
+    size_t mid = parameter.find("+");
+
+    if (mid == parameter.npos)
+    {
+        throw std::runtime_error("Invalid syntax");
+    }
+    else
+    {
+        old_word = parameter.substr(0, mid);
+        new_word = parameter.substr(mid + 1, parameter.size());
+    }
+
+    std::replace(text.begin(), text.end(), old_word, new_word);
 }
 
 void op_remove(vector<string>& text, const string& parameter)
 {
+    std::remove(text.begin(), text.end(), parameter);
 }
 
 void dispatch(vector<string>& text, const string& flag, const string& parameter)
@@ -92,6 +110,10 @@ void dispatch(vector<string>& text, const string& flag, const string& parameter)
     {
         op_remove(text, parameter);
     }
+    else
+    {
+        throw std::runtime_error("Invalid flag");
+    }
 }
 
 int main(int argc, char* argv[])
@@ -105,6 +127,11 @@ int main(int argc, char* argv[])
     }
 
     std::ifstream file{argv[1]};
+
+    if (!file.is_open())
+    {
+        throw std::runtime_error("File cannot be read");
+    }
 
     std::vector<std::string> arguments{};
     std::transform(&argv[2], &argv[argc], std::back_inserter(arguments), [](char* s) { return std::string{s}; });
