@@ -133,8 +133,7 @@ int main(int argc, char* argv[])
         throw std::runtime_error("File cannot be read");
     }
 
-    std::vector<std::string> arguments{};
-    std::transform(&argv[2], &argv[argc], std::back_inserter(arguments), [](char* s) { return std::string{s}; });
+    std::vector<std::string> arguments{&argv[2], &argv[argc]};
 
     std::vector<std::string> text{};
     std::copy(std::istream_iterator<std::string>{file}, std::istream_iterator<std::string>{}, std::back_inserter(text));
