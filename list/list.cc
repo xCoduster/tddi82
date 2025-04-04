@@ -4,26 +4,26 @@
 #include <sstream>
 #include <stdexcept>
 
-// Komplettering (bonus): Det är inte tillåtet att använda komponenter från standardbiblioteket
-//   (utöver std::initalizer_list) för att lösa uppgiften.
-
-List::List() : sentinel{nullptr}
+template <typename T>
+List<T>::List() : sentinel{nullptr}
 {
     sentinel = self_referencing();
 }
 
-List::List(std::initializer_list<int> elems) : sentinel{nullptr}
+template <typename T>
+List<T>::List(std::initializer_list<T> elems) : sentinel{nullptr}
 {
     sentinel = self_referencing();
 
-    for (auto v : elems)
+    for (T v : elems)
     {
         insert(v);
     }
 }
 
 // special: copy constructor
-List::List(List const& other) : sentinel{nullptr}
+template <typename T>
+List<T>::List(List const& other) : sentinel{nullptr}
 {
     sentinel = self_referencing();
 
@@ -36,7 +36,8 @@ List::List(List const& other) : sentinel{nullptr}
 }
 
 // special: copy assignment
-List& List::operator=(List const& rhs)
+template <typename T>
+List<T>& List<T>::operator=(List const& rhs)
 {
     while (!is_empty())
     {
@@ -54,7 +55,8 @@ List& List::operator=(List const& rhs)
 }
 
 // special: destructor
-List::~List()
+template <typename T>
+List<T>::~List()
 {
     while (!is_empty())
     {
@@ -65,7 +67,8 @@ List::~List()
 }
 
 // special: move constructor
-List::List(List&& other) : sentinel{nullptr}
+template <typename T>
+List<T>::List(List&& other) : sentinel{nullptr}
 {
     Node* empty_list_sentinel = self_referencing();
     sentinel = other.sentinel;
@@ -73,7 +76,8 @@ List::List(List&& other) : sentinel{nullptr}
 }
 
 // special: move assignment
-List& List::operator=(List&& rhs)
+template <typename T>
+List<T>& List<T>::operator=(List&& rhs)
 {
     while (!is_empty())
     {
@@ -88,7 +92,8 @@ List& List::operator=(List&& rhs)
     return *this;
 }
 
-void List::insert(int elem)
+template <typename T>
+void List<T>::insert(T elem)
 {
     Node* new_node = new Node{elem, nullptr, nullptr};
 
@@ -109,7 +114,8 @@ void List::insert(int elem)
     add_node(sentinel->prev, new_node);
 }
 
-void List::remove(int index)
+template <typename T>
+void List<T>::remove(int index)
 {
     Node* curr{sentinel->next};
     for (int i{0}; i < index; i++)
@@ -126,14 +132,16 @@ void List::remove(int index)
     delete curr;
 }
 
-bool List::is_empty() const
+template <typename T>
+bool List<T>::is_empty() const
 {
     return sentinel == sentinel->next;
 }
 
-int List::length() const
+template <typename T>
+std::size_t List<T>::length() const
 {
-    int len{0};
+    std::size_t len{0};
 
     Node* curr{sentinel->next};
     while (curr != sentinel)
@@ -145,7 +153,8 @@ int List::length() const
     return len;
 }
 
-int List::front() const
+template <typename T>
+T& List<T>::front() const
 {
     if (sentinel == sentinel->next)
     {
@@ -155,7 +164,8 @@ int List::front() const
     return sentinel->next->elem;
 }
 
-int List::back() const
+template <typename T>
+T& List<T>::back() const
 {
     if (sentinel == sentinel->prev)
     {
@@ -165,7 +175,8 @@ int List::back() const
     return sentinel->prev->elem;
 }
 
-int List::at(int index) const
+template <typename T>
+T& List<T>::at(int index) const
 {
     Node* curr{sentinel->next};
     for (int i{0}; i < index; i++)
@@ -181,7 +192,8 @@ int List::at(int index) const
     return curr->elem;
 }
 
-std::string List::to_string() const
+template <typename T>
+std::string List<T>::to_string() const
 {
     std::stringstream ss{};
 
@@ -204,7 +216,8 @@ std::string List::to_string() const
     return ss.str();
 }
 
-List List::sub(std::initializer_list<int> indices) const
+template <typename T>
+List<T> List<T>::sub(std::initializer_list<T> indices) const
 {
     List sub{};
     int curr_idx{};
@@ -238,13 +251,15 @@ List List::sub(std::initializer_list<int> indices) const
     return sub;
 }
 
-void List::push_back(int elem)
+template <typename T>
+void List<T>::push_back(T elem)
 {
     auto node = new Node{elem, nullptr, nullptr};
     add_node(sentinel->prev, node);
 }
 
-int List::pop_back()
+template <typename T>
+T List<T>::pop_back()
 {
     auto node = sentinel->prev;
     remove_node(node);
@@ -253,7 +268,8 @@ int List::pop_back()
     return elem;
 }
 
-void List::add_node(Node* curr_node, Node* new_node)
+template <typename T>
+void List<T>::add_node(Node* curr_node, Node* new_node)
 {
     new_node->next = curr_node->next;
     new_node->prev = curr_node;
@@ -261,7 +277,8 @@ void List::add_node(Node* curr_node, Node* new_node)
     curr_node->next = new_node;
 }
 
-void List::remove_node(Node* node)
+template <typename T>
+void List<T>::remove_node(Node* node)
 {
     if (node == sentinel)
     {
@@ -274,75 +291,88 @@ void List::remove_node(Node* node)
     node->next = nullptr;
 }
 
-List::Node* List::self_referencing()
+template <typename T>
+typename List<T>::Node* List<T>::self_referencing()
 {
-    Node* sentinel = new Node{0, nullptr, nullptr};
+    Node* sentinel = new Node{T{}, nullptr, nullptr};
     sentinel->prev = sentinel;
     sentinel->next = sentinel;
     return sentinel;
 }
 
-List::Iterator::Iterator(Node* elem) : elem{elem}
+template <typename T>
+List<T>::Iterator::Iterator(Node* elem) : elem{elem}
 {
 }
 
-List::Iterator::reference List::Iterator::operator*() const
+template <typename T>
+typename List<T>::Iterator::reference List<T>::Iterator::operator*() const
 {
     return elem->elem;
 }
 
-List::Iterator::pointer List::Iterator::operator->() const
+template <typename T>
+typename List<T>::Iterator::pointer List<T>::Iterator::operator->() const
 {
     return &(elem->elem);
 }
 
-List::Iterator& List::Iterator::operator++()
+template <typename T>
+typename List<T>::Iterator& List<T>::Iterator::operator++()
 {
     elem = elem->next;
     return *this;
 }
 
-List::Iterator List::Iterator::operator++(int)
+template <typename T>
+typename List<T>::Iterator List<T>::Iterator::operator++(int)
 {
-    List::Iterator tmp{*this};
+    List<T>::Iterator tmp{*this};
     elem = elem->next;
     return tmp;
 }
 
-List::Iterator& List::Iterator::operator--()
+template <typename T>
+typename List<T>::Iterator& List<T>::Iterator::operator--()
 {
     elem = elem->prev;
     return *this;
 }
 
-List::Iterator List::Iterator::operator--(int)
+template <typename T>
+typename List<T>::Iterator List<T>::Iterator::operator--(int)
 {
-    List::Iterator tmp{*this};
+    List<T>::Iterator tmp{*this};
     elem = elem->prev;
     return tmp;
 }
 
-bool List::Iterator::operator==(const Iterator& other) const
+template <typename T>
+bool List<T>::Iterator::operator==(const Iterator& other) const
 {
     return elem == other.elem;
 }
 
-bool List::Iterator::operator!=(const Iterator& other) const
+template <typename T>
+bool List<T>::Iterator::operator!=(const Iterator& other) const
 {
     return elem != other.elem;
 }
 
-List::Iterator List::begin()
+template <typename T>
+typename List<T>::Iterator List<T>::begin()
 {
-    return List::Iterator{sentinel->next};
+    return List<T>::Iterator{sentinel->next};
 }
 
-List::Iterator List::end()
+template <typename T>
+typename List<T>::Iterator List<T>::end()
 {
-    return List::Iterator{sentinel};
+    return List<T>::Iterator{sentinel};
 }
 
-std::ostream& operator<<(std::ostream& os, const List& list)
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const List<T>& list)
 {
     os << list.to_string();
 

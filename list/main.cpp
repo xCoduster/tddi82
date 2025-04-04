@@ -1,13 +1,15 @@
 #include <algorithm>
 #include <iostream>
+#include <string>
 
 #include "list.h"
 
 int main()
 {
-    List list{10, 4, 6, 7, 4, 2};
+    // List<int> list{10, 4, 6, 7, 4, 2};
+    List<std::string> list{"test1", "test3", "test2"};
 
-    for (int elem : list)
+    for (auto elem : list)
     {
         std::cout << elem << ' ';
     }
@@ -21,9 +23,9 @@ int main()
     }
     std::cout << std::endl;
 
-    std::transform(list.begin(), list.end(), list.begin(), [](int val) { return val += 2; });
+    std::transform(list.begin(), list.end(), list.begin(), [](std::string val) { return val += "t"; });
 
-    std::copy(list.begin(), list.end(), std::ostream_iterator<int>{std::cout, " "});
+    std::copy(list.begin(), list.end(), std::ostream_iterator<std::string>{std::cout, " "});
     std::cout << std::endl;
 
     return 0;

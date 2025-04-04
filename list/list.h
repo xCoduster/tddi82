@@ -7,11 +7,12 @@
 #include <cstddef>
 #include <iterator>
 
+template <typename T>
 class List
 {
 public:
     List();
-    List(std::initializer_list<int> elems);
+    List(std::initializer_list<T> elems);
 
     // special: copy constructor
     List(List const& other);
@@ -24,23 +25,23 @@ public:
     // special: move assignment
     List& operator=(List&& rhs);
 
-    void insert(int elem);
+    void insert(T elem);
     void remove(int index);
 
     bool is_empty() const;
-    int length() const;
-    int front() const;
-    int back() const;
-    int at(int index) const;
+    std::size_t length() const;
+    T& front() const;
+    T& back() const;
+    T& at(int index) const;
 
     std::string to_string() const;
 
-    List sub(std::initializer_list<int> indices) const;
+    List sub(std::initializer_list<T> indices) const;
 
 private:
     struct Node
     {
-        int elem;
+        T elem;
         Node* next;
         Node* prev;
     };
@@ -50,9 +51,9 @@ private:
     public:
         using iterator_category = std::bidirectional_iterator_tag;
         using difference_type = std::ptrdiff_t;
-        using value_type = int;
-        using pointer = int*;
-        using reference = int&;
+        using value_type = T;
+        using pointer = T*;
+        using reference = T&;
 
         Iterator(Node* elem);
 
@@ -72,8 +73,8 @@ private:
         List::Node* elem;
     };
 
-    void push_back(int elem);
-    int pop_back();
+    void push_back(T elem);
+    T pop_back();
     void add_node(Node* curr_node, Node* new_node);
     void remove_node(Node* node);
     Node* self_referencing();
@@ -85,6 +86,11 @@ public:
     Iterator end();
 };
 
-std::ostream& operator<<(std::ostream& os, const List& list);
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const List<T>& list);
+
+// Templates must be written in the header file
+// Renamed to list.cc to not be included in make
+#include "list.cc"
 
 #endif
