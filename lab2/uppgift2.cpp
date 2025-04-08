@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "counted_ptr.h"
+
 Node* create_example()
 {
     Node* n0 { new Node { 0 } };

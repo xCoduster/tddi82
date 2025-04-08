@@ -41,3 +41,5 @@ build/lab2: | build
 build/lab2/%.o: lab2/%.cpp | build/lab2
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
+build/lab2/uppgift2.o: lab2/uppgift2.cpp lab2/counted_ptr.tcc lab2/counted_ptr.h | build/lab2
+	$(CXX) $(CXXFLAGS) -o build/lab2/uppgift2.o -c lab2/uppgift2.cpp
