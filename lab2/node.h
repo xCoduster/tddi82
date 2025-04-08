@@ -8,7 +8,7 @@ template <typename T>
 class Node
 {
 public:
-    Node(T elem);
+    Node(T value);
 
     void insert(counted_ptr<Node<T>>& node);
     void remove(counted_ptr<Node<T>>& node);
@@ -17,7 +17,7 @@ public:
     typename std::vector<counted_ptr<Node<T>>>::const_iterator end() const;
 
 public:
-    T elem;
+    T value;
 
 private:
     std::vector<counted_ptr<Node<T>>> neighbours{};

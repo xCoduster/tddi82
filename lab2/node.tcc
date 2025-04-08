@@ -5,7 +5,7 @@
 #include <set>
 
 template <typename T>
-Node<T>::Node(T elem) : elem{elem}
+Node<T>::Node(T value) : value{value}
 {
 }
 

@@ -27,7 +27,7 @@ void print_nodes(std::vector<counted_ptr<Node<int>>> nodes)
 {
     for (counted_ptr<Node<int>> node : nodes)
     {
-        std::cout << node->elem << " ";
+        std::cout << node->value << " ";
     }
     std::cout << std::endl;
 }

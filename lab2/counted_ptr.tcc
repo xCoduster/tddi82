@@ -81,9 +81,21 @@ bool counted_ptr<T>::operator==(const counted_ptr<T>& rhs) const
 }
 
 template <typename T>
-bool counted_ptr<T>::operator!=(const counted_ptr<T>& rhs)
+bool counted_ptr<T>::operator!=(const counted_ptr<T>& rhs) const
 {
     return ptr != rhs.ptr;
+}
+
+template <typename T>
+bool counted_ptr<T>::operator==(const T* rhs) const
+{
+    return ptr == rhs;
+}
+
+template <typename T>
+bool counted_ptr<T>::operator!=(const T* rhs) const
+{
+    return ptr != rhs;
 }
 
 template <typename T>
