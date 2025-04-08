@@ -1,0 +1,17 @@
+Uppgift 3: Teorifrågor
+
+
+Fråga 1.
+
+Node implementerar det vanliga iteratorprotokollet som är standard i C++ med begin/end metoder som I detta
+fallet helt enkelt är ett annat namn på std::vector::iterator som fås från den inre vektorn.
+
+Om kompilatorn stöter på en "for (x : y)" loop kommer den att anta att y implementerar iteratorprotokollet och generera
+kod (fast ja, inte ++0 längre) som kör begin/end bakom kulisserna.
+
+Fråga 2.
+
+Detta är ett klassiskt fall av en referenscykel. Detta händer då det krävs att varje
+ställe som "äger" en counted_ptr som har ökat counter måste köra destruktorn för att counter når 0
+och den underliggande datan frigörs. Om en cykel skapas i grafen så finns det ingen punkt den kan "bryta"
+och börja frigöras i kaskad.

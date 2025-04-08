@@ -4,4 +4,5 @@ PointerAlignment: Left
 BreakTemplateDeclarations: Yes
 IndentAccessModifiers: false
 AccessModifierOffset: -4
+PackConstructorInitializers: NextLineOnly
 ...

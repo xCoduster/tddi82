@@ -1,12 +1,14 @@
 #include "counted_ptr.h"
 
 template <typename T>
-counted_ptr<T>::counted_ptr() : ptr{nullptr}, counter{nullptr}
+counted_ptr<T>::counted_ptr()
+    : ptr{nullptr}, counter{nullptr}
 {
 }
 
 template <typename T>
-counted_ptr<T>::counted_ptr(T* ptr) : ptr{ptr}, counter{new int{1}}
+counted_ptr<T>::counted_ptr(T* ptr)
+    : ptr{ptr}, counter{new int{1}}
 {
 }
 
@@ -17,7 +19,8 @@ counted_ptr<T>::~counted_ptr()
 }
 
 template <typename T>
-counted_ptr<T>::counted_ptr(const counted_ptr<T>& other) : ptr{other.ptr}, counter{other.counter}
+counted_ptr<T>::counted_ptr(const counted_ptr<T>& other)
+    : ptr{other.ptr}, counter{other.counter}
 {
     incr();
 }
@@ -33,7 +36,8 @@ counted_ptr<T>& counted_ptr<T>::operator=(const counted_ptr<T>& rhs)
 }
 
 template <typename T>
-counted_ptr<T>::counted_ptr(counted_ptr<T>&& rhs) : ptr{rhs.ptr}, counter{rhs.counter}
+counted_ptr<T>::counted_ptr(counted_ptr<T>&& rhs)
+    : ptr{rhs.ptr}, counter{rhs.counter}
 {
     rhs.ptr = nullptr;
     rhs.counter = nullptr;
@@ -47,6 +51,16 @@ counted_ptr<T>& counted_ptr<T>::operator=(counted_ptr<T>&& rhs)
     counter = rhs.counter;
     rhs.ptr = nullptr;
     rhs.counter = nullptr;
+    return *this;
+}
+
+template <typename T>
+counted_ptr<T>& counted_ptr<T>::operator=(std::nullptr_t rhs)
+{
+    decr();
+    ptr = nullptr;
+    counter = nullptr;
+
     return *this;
 }
 

@@ -1,6 +1,8 @@
 #ifndef COUNTED_PTR_H_
 #define COUNTED_PTR_H_
 
+#include <cstddef>
+
 template <typename T>
 class counted_ptr
 {
@@ -15,6 +17,8 @@ public:
 
     counted_ptr(counted_ptr&& other);
     counted_ptr& operator=(counted_ptr&& rhs);
+
+    counted_ptr& operator=(std::nullptr_t rhs);
 
     T& operator*();
     const T& operator*() const;
