@@ -22,8 +22,8 @@ public:
     T* operator->();
     const T* operator->() const;
 
-    bool operator==(const T& rhs) const;
-    bool operator!=(const T& rhs);
+    bool operator==(const counted_ptr<T>& rhs) const;
+    bool operator!=(const counted_ptr<T>& rhs);
 
     int use_count() const;
 

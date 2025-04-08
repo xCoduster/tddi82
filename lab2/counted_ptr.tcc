@@ -26,19 +26,15 @@ template <typename T>
 counted_ptr<T>& counted_ptr<T>::operator=(const counted_ptr<T>& rhs)
 {
     decr();
-
     ptr = rhs.ptr;
     counter = rhs.counter;
-
     incr();
+    return *this;
 }
 
 template <typename T>
-counted_ptr<T>::counted_ptr(counted_ptr<T>&& rhs)
+counted_ptr<T>::counted_ptr(counted_ptr<T>&& rhs) : ptr{rhs.ptr}, counter{rhs.counter}
 {
-    ptr = rhs.ptr;
-    counter = rhs.counter;
-
     rhs.ptr = nullptr;
     rhs.counter = nullptr;
 }
@@ -47,12 +43,11 @@ template <typename T>
 counted_ptr<T>& counted_ptr<T>::operator=(counted_ptr<T>&& rhs)
 {
     decr();
-
     ptr = rhs.ptr;
     counter = rhs.counter;
-
     rhs.ptr = nullptr;
     rhs.counter = nullptr;
+    return *this;
 }
 
 template <typename T>
@@ -80,13 +75,13 @@ const T* counted_ptr<T>::operator->() const
 }
 
 template <typename T>
-bool counted_ptr<T>::operator==(const T& rhs) const
+bool counted_ptr<T>::operator==(const counted_ptr<T>& rhs) const
 {
     return ptr == rhs.ptr;
 }
 
 template <typename T>
-bool counted_ptr<T>::operator!=(const T& rhs)
+bool counted_ptr<T>::operator!=(const counted_ptr<T>& rhs)
 {
     return ptr != rhs.ptr;
 }
