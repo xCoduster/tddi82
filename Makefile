@@ -24,3 +24,20 @@ build/lab1: | build
 
 build/lab1/%.o: lab1/%.cpp | build/lab1
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+.PHONY: lab2
+lab2: $(call objs,lab2) | build/lab2
+	$(CXX) $(CXXFLAGS) $(call objs,lab2) -o build/lab2/prog
+	./build/lab2/prog
+
+.PHONY: valgrind
+valgrind: $(call objs,lab2) | build/lab2
+	$(CXX) $(CXXFLAGS) $(call objs,lab2) -o build/lab2/prog
+	valgrind ./build/lab2/prog
+
+build/lab2: | build
+	mkdir build/lab2
+
+build/lab2/%.o: lab2/%.cpp | build/lab2
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
