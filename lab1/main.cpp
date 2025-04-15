@@ -9,6 +9,20 @@
 #include <vector>
 
 using namespace std;
+//   Information om komplettering:
+//   Kompletteringen kan gälla hela filen och alla filer i labben,
+//   så får ni komplettering på en sak, kan samma sak förekomma på
+//   fler ställen utan att jag skrivit det.
+//
+//   Komplettering lämnas in via sendlab inom 5 arbetsdagar.
+//   Har ni frågor om kompletteringen kan ni maila mig.
+
+// Komplettering: Fånga exceptions på lämpligt sätt. Användaren ska aldrig behöva se “Terminate called after...”.
+// Komplettering: Spara inte undan flags och params i egna vectorer i onödan
+// Komplettering: Remove fungerar ej enligt specifikation i lab-pm
+// Komplettering: Använd const& för att undvika onödig kopiering (se även parametrar till lambda och range-baserade
+// loopar) Komplettering: Upprepning vid utskrift av table och frequency
+//          Tips: tänk på att left och right är sticky
 
 void op_print(const vector<string>& text)
 {
@@ -21,7 +35,7 @@ vector<pair<string, size_t>> get_frequency(const vector<string>& text)
     std::set<string> unique{text.begin(), text.end()};
 
     vector<pair<string, size_t>> frequencies{};
-    std::transform(unique.begin(), unique.end(), std::back_inserter(frequencies), [&text](string word) {
+    std::transform(unique.begin(), unique.end(), std::back_inserter(frequencies), [&text](const string& word) {
         size_t occurences = std::count(text.begin(), text.end(), word);
         return std::make_pair(word, occurences);
     });
@@ -29,37 +43,31 @@ vector<pair<string, size_t>> get_frequency(const vector<string>& text)
     return frequencies;
 }
 
-size_t max(const vector<pair<string, size_t>>& container)
-{
-    auto it = std::max_element(container.begin(), container.end(),
-                               [](auto a, auto b) { return a.first.size() < b.first.size(); });
-    return it->first.size();
-}
-
-void op_frequency(const vector<string>& text)
+void op_frequency(const vector<string>& text, bool table)
 {
     vector<pair<string, size_t>> frequencies{get_frequency(text)};
-    std::sort(frequencies.begin(), frequencies.end(), [](auto a, auto b) { return a.second > b.second; });
 
-    size_t max_len{max(frequencies)};
+    auto sort_lambda = [table](const auto& a, const auto& b) {
+        if (table)
+            return a.first < b.first;
+        else
+            return a.second > b.second;
+    };
 
-    for (auto elem : frequencies)
+    std::sort(frequencies.begin(), frequencies.end(), sort_lambda);
+
+    auto max_it = std::max_element(frequencies.begin(), frequencies.end(),
+                                   [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
+    size_t max_len{max_it->first.size()};
+
+    if (table)
+        cout << std::left;
+    else
+        cout << std::right;
+
+    for (const auto& elem : frequencies)
     {
         cout << std::setw(max_len) << elem.first << " " << elem.second << endl;
-    }
-}
-
-void op_table(const vector<string>& text)
-{
-    vector<pair<string, size_t>> frequencies{get_frequency(text)};
-    std::sort(frequencies.begin(), frequencies.end(), [](auto a, auto b) { return a.first < b.first; });
-
-    size_t max_len{max(frequencies)};
-
-    for (auto elem : frequencies)
-    {
-        cout << std::left << setw(max_len + 1) << elem.first;
-        cout << std::right << elem.second << endl;
     }
 }
 
@@ -85,7 +93,8 @@ void op_substitute(vector<string>& text, const string& parameter)
 
 void op_remove(vector<string>& text, const string& parameter)
 {
-    std::remove(text.begin(), text.end(), parameter);
+    auto it = std::remove(text.begin(), text.end(), parameter);
+    text.erase(it, text.end());
 }
 
 void dispatch(vector<string>& text, const string& flag, const string& parameter)
@@ -96,11 +105,11 @@ void dispatch(vector<string>& text, const string& flag, const string& parameter)
     }
     else if (flag == "frequency")
     {
-        op_frequency(text);
+        op_frequency(text, false);
     }
     else if (flag == "table")
     {
-        op_table(text);
+        op_frequency(text, true);
     }
     else if (flag == "substitute")
     {
@@ -112,7 +121,7 @@ void dispatch(vector<string>& text, const string& flag, const string& parameter)
     }
     else
     {
-        throw std::runtime_error("Invalid flag");
+        throw std::runtime_error("Invalid flag: \"" + flag + "\"");
     }
 }
 
@@ -123,14 +132,15 @@ int main(int argc, char* argv[])
         std::string usage{"Usage: "};
         std::string prog{argv[0]};
         std::string file{" [file]"};
-        throw std::runtime_error(usage + prog + file);
+        std::cout << "Usage: " << argv[0] << " [file]" << std::endl;
+        return 1;
     }
 
     std::ifstream file{argv[1]};
 
     if (!file.is_open())
     {
-        throw std::runtime_error("File cannot be read");
+        std::cout << "File " << argv[1] << " cannot be opened!" << std::endl;
     }
 
     std::vector<std::string> arguments{&argv[2], &argv[argc]};
@@ -138,28 +148,20 @@ int main(int argc, char* argv[])
     std::vector<std::string> text{};
     std::copy(std::istream_iterator<std::string>{file}, std::istream_iterator<std::string>{}, std::back_inserter(text));
 
-    std::vector<std::string> flags{};
-    std::vector<std::string> parameters{};
-
-    std::for_each(arguments.begin(), arguments.end(), [&flags, &parameters](std::string arg) {
-        size_t mid = arg.find("=");
-
-        if (mid == arg.npos)
-        {
-            arg.erase(0, 2);
-            flags.push_back(arg);
-            parameters.push_back(std::string{});
-        }
-        else
-        {
-            flags.push_back(arg.substr(2, mid - 2));
-            parameters.push_back(arg.substr(mid + 1, arg.size()));
-        }
-    });
-
-    for (size_t i{}; i < flags.size(); i++)
+    for (const std::string& arg : arguments)
     {
-        dispatch(text, flags[i], parameters[i]);
+        size_t mid = arg.find("=");
+        try
+        {
+            if (mid == arg.npos)
+                dispatch(text, arg.substr(2, arg.size()), "");
+            else
+                dispatch(text, arg.substr(2, mid - 2), arg.substr(mid + 1, arg.size()));
+        }
+        catch (std::exception& e)
+        {
+            std::cout << e.what() << std::endl;
+        }
     }
 
     return 0;

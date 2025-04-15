@@ -17,7 +17,7 @@ build:
 .PHONY: lab1
 lab1: $(call objs,lab1) | build/lab1
 	$(CXX) $(CXXFLAGS) $(call objs,lab1) -o build/lab1/prog
-	./build/lab1/prog lab1/short.txt --remove=the --print
+	./build/lab1/prog lab1/short.txt --remove=the --frequency --print --table --substitute=is+si --print
 
 build/lab1: | build
 	mkdir build/lab1
