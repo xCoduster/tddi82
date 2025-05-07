@@ -1,10 +1,9 @@
 #include "counted_ptr.h"
 
+// Komplettering: Ändra så att uppgift2 använder sig av std::string enligt uppgiftsbeskrivningen.
 
-//Komplettering: Ändra så att uppgift2 använder sig av std::string enligt uppgiftsbeskrivningen.
-
-//Komplettering: Istället för att kolla ptr mot nullptr i incr, decr och use_count kolla mot counter pekaren direkt.
-//Komplettering: Självtilldelning innebär felaktigt beteende i tilldelningsoperatorerna.
+// Komplettering: Istället för att kolla ptr mot nullptr i incr, decr och use_count kolla mot counter pekaren direkt.
+// Komplettering: Självtilldelning innebär felaktigt beteende i tilldelningsoperatorerna.
 
 template <typename T>
 counted_ptr<T>::counted_ptr()
@@ -34,10 +33,13 @@ counted_ptr<T>::counted_ptr(const counted_ptr<T>& other)
 template <typename T>
 counted_ptr<T>& counted_ptr<T>::operator=(const counted_ptr<T>& rhs)
 {
-    decr();
-    ptr = rhs.ptr;
-    counter = rhs.counter;
-    incr();
+    if (&rhs != this)
+    {
+        decr();
+        ptr = rhs.ptr;
+        counter = rhs.counter;
+        incr();
+    }
     return *this;
 }
 
@@ -52,11 +54,14 @@ counted_ptr<T>::counted_ptr(counted_ptr<T>&& rhs)
 template <typename T>
 counted_ptr<T>& counted_ptr<T>::operator=(counted_ptr<T>&& rhs)
 {
-    decr();
-    ptr = rhs.ptr;
-    counter = rhs.counter;
-    rhs.ptr = nullptr;
-    rhs.counter = nullptr;
+    if (&rhs != this)
+    {
+        decr();
+        ptr = rhs.ptr;
+        counter = rhs.counter;
+        rhs.ptr = nullptr;
+        rhs.counter = nullptr;
+    }
     return *this;
 }
 
@@ -121,7 +126,7 @@ bool counted_ptr<T>::operator!=(const T* rhs) const
 template <typename T>
 int counted_ptr<T>::use_count() const
 {
-    if (ptr == nullptr)
+    if (counter == nullptr)
     {
         return 0;
     }
@@ -144,7 +149,7 @@ const T* counted_ptr<T>::get() const
 template <typename T>
 void counted_ptr<T>::incr()
 {
-    if (ptr != nullptr)
+    if (counter != nullptr)
     {
         ++(*counter);
     }
@@ -153,7 +158,7 @@ void counted_ptr<T>::incr()
 template <typename T>
 void counted_ptr<T>::decr()
 {
-    if (ptr != nullptr)
+    if (counter != nullptr)
     {
         if (--(*counter) == 0)
         {
