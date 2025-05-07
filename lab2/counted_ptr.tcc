@@ -1,5 +1,11 @@
 #include "counted_ptr.h"
 
+
+//Komplettering: Ändra så att uppgift2 använder sig av std::string enligt uppgiftsbeskrivningen.
+
+//Komplettering: Istället för att kolla ptr mot nullptr i incr, decr och use_count kolla mot counter pekaren direkt.
+//Komplettering: Självtilldelning innebär felaktigt beteende i tilldelningsoperatorerna.
+
 template <typename T>
 counted_ptr<T>::counted_ptr()
     : ptr{nullptr}, counter{nullptr}

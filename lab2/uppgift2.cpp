@@ -3,6 +3,8 @@
 #include "counted_ptr.h"
 #include "node.h"
 
+//Komplettering: Ändra så att uppgift2 använder sig av std::string enligt uppgiftsbeskrivningen.
+
 counted_ptr<Node<int>> create_example()
 {
     counted_ptr<Node<int>> n0{new Node{0}};
